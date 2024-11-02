@@ -55,23 +55,41 @@ def export_attachment(mail, mail_id, extensions = [".pdf", ".doc", ".docx", ".pp
                     if part.get_content_disposition() == "attachment":
                         # Get the filename and decode it if needed
                         filename = part.get_filename()
+                        if sender_username.lower().startswith("granatz"):
+                            return False
+                        if sender_username.lower().startswith("barsony"):
+                            return False
+                        if sender_username.lower().startswith("szonja.toth"):
+                            return False
+                        if "tig" in filename.lower() or "szerz" in filename.lower():
+                            return False
+                        if "megbizasi" in filename.lower() or "szerz" in filename.lower():
+                            return False
+                        if "invoice" in filename.lower() or "szamla" in filename.lower():
+                            return False
+                        if "eshop" in filename.lower() or "szamla" in filename.lower():
+                            return False
+                        if "meghívó" in filename.lower() or "meghivo" in filename.lower():
+                            return False
+                        if "invite" in filename.lower() or "invitation" in filename.lower():
+                            return False
+
                         try:
-                            if filename:
-                                filename = decode_header(filename)[0][0]
-                                if isinstance(filename, bytes):
-                                    filename = filename.decode('ISO-8859-1') # hungarian filenames
-                                # Check if the file is a PDF
-                                if any(filename.lower().endswith(ext) for ext in extensions):
-                                    filename = f"{sender_username}{filename}"
-                                    filepath = os.path.join(attachment_folder, filename)
-                                else:
-                                    pass
-                                if not os.path.exists(filepath):
-                                    with open(filepath, "wb") as f:
-                                        f.write(part.get_payload(decode=True))
-                                    print(f"Downloaded: {filename}")
-                                else:
-                                    print(f"{filename} already exist. Delete to force redownload")
+                            filename = decode_header(filename)[0][0]
+                            if isinstance(filename, bytes):
+                                filename = filename.decode('ISO-8859-1') # hungarian filenames
+                            if any(filename.lower().endswith(ext) for ext in extensions):
+                                filename = f"{sender_username}{filename}"
+                                filepath = os.path.join(attachment_folder, filename)
+                            else:
+                                pass
+                            if not os.path.exists(filepath):
+                                with open(filepath, "wb") as f:
+                                    f.write(part.get_payload(decode=True))
+                                print(f"Downloaded: {filename}")
+                                return True
+                            else:
+                                print(f"{filename} already exist. Delete to force redownload")
                         except Exception:
                             print(f"Failed to download {filename}")
 
@@ -82,10 +100,10 @@ def export_attachments_from_folder(folder = "inbox", days = 30, n = None, extens
         export_attachment(mail = mail, mail_id = mail_id, extensions = extensions, attachment_folder = attachment_folder)
     mail.logout()
 
-def main() -> None:
-    export_attachments_from_folder(folder = "inbox", days = 30)
-    export_attachments_from_folder(folder = "w_attachment", days = 30)
-    export_attachments_from_folder(folder = "mnb", days = 30)
+def main(days = 30) -> None:
+    export_attachments_from_folder(folder = "inbox", days = days)
+    export_attachments_from_folder(folder = "w_attachment", days = days)
+    export_attachments_from_folder(folder = "mnb", days = days)
 
 if __name__ == "__main__":
     mail = gmail_login()
