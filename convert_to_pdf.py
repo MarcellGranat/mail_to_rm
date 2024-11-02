@@ -44,8 +44,6 @@ def doc_to_pdf(input_file):
     '''
     subprocess.run(["osascript", "-e", applescript])
 
-doc_to_pdf(input_file=os.path.abspath("attachments/granatm_The impact of LLM on the labour market spatial evidence v22102024.docx"))
-
 def ppt_to_pdf(input_file):
     # based on https://github.com/jeongwhanchoi/convert-ppt-to-pdf
     applescript = f'''
