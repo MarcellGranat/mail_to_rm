@@ -1,0 +1,11 @@
+*.pyc
+*.pyo
+__pycache__/
+.*
+/.*
+!.gitignore
+*pdf
+*doc
+*docx
+*ppt
+*pptx
